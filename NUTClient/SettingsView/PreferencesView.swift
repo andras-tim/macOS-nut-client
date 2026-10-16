@@ -25,6 +25,8 @@ class AppPreferences: ObservableObject {
         }
     }
     
+    @Published var notifyPowerEvents: Bool { didSet { UserDefaults.standard.set(notifyPowerEvents, forKey: "notifyPowerEvents") } }
+    
     @Published var launchAtLogin: Bool {
         didSet {
             updateLaunchAtLoginState()
@@ -41,6 +43,7 @@ class AppPreferences: ObservableObject {
         
         // Default to hiding the dock icon for a menu bar app
         self.hideDockIcon = UserDefaults.standard.object(forKey: "hideDockIcon") as? Bool ?? true
+        self.notifyPowerEvents = UserDefaults.standard.object(forKey: "notifyPowerEvents") as? Bool ?? true
         
         // Read actual system status for Launch at Login
         if #available(macOS 13.0, *) {
@@ -98,6 +101,9 @@ struct PreferencesView: View {
             GroupBox("App Behavior") {
                 VStack(alignment: .leading, spacing: 12) {
                     Toggle("Hide App from Dock", isOn: $prefs.hideDockIcon)
+                        .toggleStyle(.switch)
+                    
+                    Toggle("Notify on power failure, restore and shutdown", isOn: $prefs.notifyPowerEvents)
                         .toggleStyle(.switch)
                     
                     HStack {
