@@ -42,27 +42,11 @@ class TrayMenuController: NSObject, NSMenuDelegate {
             for section in sections {
                 menu.addItem(NSMenuItem.separator())
                 
-                // group Header
-                let headerItem = NSMenuItem()
-                let attrs: [NSAttributedString.Key: Any] = [
-                    .font: NSFont.systemFont(ofSize: 13, weight: .bold),
-                    .foregroundColor: NSColor.secondaryLabelColor
-                ]
-                headerItem.attributedTitle = NSAttributedString(string: section.title, attributes: attrs)
-                headerItem.isEnabled = false
-                menu.addItem(headerItem)
-                
-                // group Items
+                // Views, not plain items: macOS dims disabled menu items whatever their colour, and a view row
+                // is neither dimmed nor highlighted on hover.
+                menu.addItem(hostedItem(MenuSectionTitleView(title: section.title), height: 22))
                 for row in section.items {
-                    let item = NSMenuItem(title: row.displayTitle, action: nil, keyEquivalent: "")
-                    // Disabled keeps the row unclickable; the explicit colour keeps it readable (not dimmed).
-                    item.attributedTitle = NSAttributedString(string: row.displayTitle, attributes: [
-                        .font: NSFont.menuFont(ofSize: 0),
-                        .foregroundColor: NSColor.labelColor
-                    ])
-                    item.isEnabled = false
-                    item.indentationLevel = 1
-                    menu.addItem(item)
+                    menu.addItem(hostedItem(MenuValueRowView(label: row.label, value: row.value), height: 22))
                 }
             }
         }
@@ -77,5 +61,47 @@ class TrayMenuController: NSObject, NSMenuDelegate {
         let footerMenuItem = NSMenuItem()
         footerMenuItem.view = footerController.view
         menu.addItem(footerMenuItem)
+    }
+}
+
+private func hostedItem<V: View>(_ view: V, height: CGFloat) -> NSMenuItem {
+    let controller = NSHostingController(rootView: view)
+    controller.view.frame.size = NSSize(width: 300, height: height)
+    let item = NSMenuItem()
+    item.view = controller.view
+    return item
+}
+
+/// A section title in the menu body, styled like the header's secondary text.
+struct MenuSectionTitleView: View {
+    let title: String
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.secondary)
+            Spacer()
+        }
+        .padding(.horizontal, 14)
+    }
+}
+
+/// One selected UPS value: label left, value right, like the header's stat lines.
+struct MenuValueRowView: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 13))
+                .foregroundColor(.primary)
+            Spacer()
+            Text(value)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.primary)
+        }
+        .padding(.horizontal, 14)
     }
 }

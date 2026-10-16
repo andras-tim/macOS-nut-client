@@ -14,6 +14,8 @@ struct MenuSection {
 struct MenuRow {
     let id: String
     let displayTitle: String
+    let label: String
+    let value: String
 }
 
 class TrayMenuViewModel {
@@ -40,7 +42,8 @@ class TrayMenuViewModel {
                     if let liveValue = state.variables[variable.rawValue] {
                         let formattedValue = variable.formatLiveValue(liveValue)
                         let title = "\(variable.displayName): \(formattedValue)"
-                        rows.append(MenuRow(id: variable.rawValue, displayTitle: title))
+                        rows.append(MenuRow(id: variable.rawValue, displayTitle: title,
+                                            label: variable.displayName, value: formattedValue))
                     }
                 }
                 

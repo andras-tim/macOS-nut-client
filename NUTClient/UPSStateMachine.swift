@@ -118,10 +118,11 @@ class UPSStateMachine: ObservableObject {
         }
     }
     
-    /// What the menu names the UPS by: its description, else its model, else the server address.
+    /// What the menu names the UPS by: its description, else its model, else its configured name (never the address).
     var upsTitle: String {
         if let desc = upsDescription, !desc.isEmpty, desc != "Unavailable" { return desc }
-        return variables["device.model"] ?? variables["ups.model"] ?? hostString
+        return variables["device.model"] ?? variables["ups.model"]
+            ?? UserDefaults.standard.string(forKey: "nutUPSName") ?? "ups"
     }
     
     var percentText: String? { chargeValue.map { "\(Int($0))%" } }
