@@ -1,0 +1,52 @@
+name: build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show the Xcode version
+        run: xcodebuild -version
+
+      # Universal binary, ad-hoc signed: no Apple developer account needed; the entitlements (sandbox, outgoing
+      # network) come from the project settings through Xcode's base-entitlement injection, which also adds
+      # get-task-allow (CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO would drop the sandbox too).
+      - name: Build
+        run: >
+          xcodebuild -project NUTClient.xcodeproj -target NUTClient -configuration Release
+          ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO
+          CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
+          SYMROOT="$PWD/build" build
+
+      - name: Check architectures and signature
+        run: |
+          lipo -archs build/Release/NUTClient.app/Contents/MacOS/NUTClient
+          codesign --verify --verbose build/Release/NUTClient.app
+          codesign -d --entitlements - build/Release/NUTClient.app
+
+      - name: Package
+        run: ditto -c -k --keepParent build/Release/NUTClient.app NUTClient.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NUTClient
+          path: NUTClient.zip
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "$GITHUB_REF_NAME" NUTClient.zip --title "$GITHUB_REF_NAME" --prerelease
+          --notes "Universal (arm64 + x86_64), ad-hoc signed build of $GITHUB_SHA."
