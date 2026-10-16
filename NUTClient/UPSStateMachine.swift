@@ -13,6 +13,8 @@ class UPSStateMachine: ObservableObject {
     @Published var localNetworkDenied: Bool = false
     /// Why the app is not connected (network error, Local Network access, a server ERR reply); nil when fine.
     @Published var connectionError: String?
+    /// The UPS description from the server's ups.conf (GET UPSDESC), e.g. "Back-UPS Pro Gaming 2200".
+    @Published var upsDescription: String?
     @Published var hostString: String = ""
     @Published var variables: [String: String] = [:]
     
@@ -114,6 +116,12 @@ class UPSStateMachine: ObservableObject {
         case .discharging: return "Running on Battery"
         case .critical: return "Battery Nearly Empty"
         }
+    }
+    
+    /// What the menu names the UPS by: its description, else its model, else the server address.
+    var upsTitle: String {
+        if let desc = upsDescription, !desc.isEmpty, desc != "Unavailable" { return desc }
+        return variables["device.model"] ?? variables["ups.model"] ?? hostString
     }
     
     var percentText: String? { chargeValue.map { "\(Int($0))%" } }

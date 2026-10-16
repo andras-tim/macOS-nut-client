@@ -46,7 +46,7 @@ struct HeaderView: View {
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.primary)
                     
-                    Text(state.hostString)
+                    Text(state.upsTitle)
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                 }

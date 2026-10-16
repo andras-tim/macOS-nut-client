@@ -164,6 +164,7 @@ class NUTClient {
     }
     
     private func startPolling() {
+        send(command: "GET UPSDESC \(upsName)\n")
         fetchStats()
         DispatchQueue.main.async {
             self.pollTimer?.invalidate()
@@ -202,6 +203,14 @@ class NUTClient {
             if line.hasPrefix("ERR ") {
                 let reason = "server replied " + line
                 DispatchQueue.main.async { self.state.connectionError = reason }
+            }
+            // UPSDESC <ups> "<description>"
+            if line.hasPrefix("UPSDESC ") {
+                let parts = line.split(separator: "\"", maxSplits: 2, omittingEmptySubsequences: false)
+                if parts.count >= 2 {
+                    let description = String(parts[1])
+                    DispatchQueue.main.async { self.state.upsDescription = description }
+                }
             }
             if line.hasPrefix("VAR ") {
                 let parts = line.split(separator: "\"", maxSplits: 2, omittingEmptySubsequences: false)
