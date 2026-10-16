@@ -86,15 +86,18 @@ class NUTClient {
                 switch networkState {
                 case .ready:
                     self?.state.localNetworkDenied = false
+                    self?.state.connectionError = nil
                     self?.state.isConnected = true
                     self?.startReceiving()
                     self?.performHandshake()
-                case .waiting:
+                case .waiting(let error):
                     // The connection keeps waiting and goes ready by itself once access is granted.
                     if self?.connection?.currentPath?.unsatisfiedReason == .localNetworkDenied {
                         self?.state.localNetworkDenied = true
                     }
+                    self?.state.connectionError = error.localizedDescription
                 case .failed(let error):
+                    self?.state.connectionError = error.localizedDescription
                     print("Connection failed: \(error)")
                     self?.handleDisconnect()
                 case .cancelled:
@@ -195,6 +198,11 @@ class NUTClient {
         var parsedDict: [String: String] = [:]
         
         for line in lines {
+            // e.g. "ERR UNKNOWN-UPS" for a wrong UPS name: the socket is fine, the answer is not
+            if line.hasPrefix("ERR ") {
+                let reason = "server replied " + line
+                DispatchQueue.main.async { self.state.connectionError = reason }
+            }
             if line.hasPrefix("VAR ") {
                 let parts = line.split(separator: "\"", maxSplits: 2, omittingEmptySubsequences: false)
                 if parts.count >= 2 {
@@ -210,6 +218,7 @@ class NUTClient {
         
         if !parsedDict.isEmpty {
             DispatchQueue.main.async {
+                self.state.connectionError = nil
                 self.state.variables.merge(parsedDict) { (_, new) in new }
             }
         }

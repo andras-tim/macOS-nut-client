@@ -51,14 +51,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
-        if let button = statusItem.button {
-            button.image = NSImage(named: "icon.battery.bolt")
-        }
+        updateMenuIcon()
         
         trayMenuController = TrayMenuController(state: upsState)
         statusItem.menu = trayMenuController.menu
         
         sharedClient.connect()
+        // The menu bar text switches live from Preferences.
+        NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.updateMenuIcon()
+            }
+            .store(in: &cancellables)
+        
         upsState.$isConnected
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -105,19 +111,49 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     private func updateMenuIcon() {
         guard let button = statusItem.button else { return }
-        // Without a connection the last values may be stale: show that instead of a healthy-looking icon.
-        if !upsState.isConnected {
-            button.image = NSImage(named: "icon.battery.low")
-            button.toolTip = upsState.localNetworkDenied
-                ? "Local network access needed for \(upsState.hostString)"
-                : "Not connected to \(upsState.hostString)"
-        } else if upsState.isRunningOnBattery {
-            button.image = NSImage(named: "icon.battery.exclamation")
-            button.toolTip = "On UPS battery"
-        } else {
-            button.image = NSImage(named: "icon.battery.bolt")
-            button.toolTip = "On mains power"
+        let powerState = upsState.powerState
+        
+        // Template images follow the light/dark menu bar; red only close to the shutdown.
+        button.image = powerState == .disconnected
+            ? Self.symbolWithQuestionMark(upsState.iconSymbolName)
+            : Self.symbol(upsState.iconSymbolName)
+        button.imagePosition = .imageLeft
+        let color: NSColor? = powerState == .critical ? .systemRed : nil
+        button.contentTintColor = color
+        
+        let status = upsState.statusText(.current)
+        button.attributedTitle = NSAttributedString(string: status.isEmpty ? "" : " " + status, attributes: [
+            .font: NSFont.menuBarFont(ofSize: 0),
+            .foregroundColor: color ?? NSColor.labelColor
+        ])
+        
+        button.toolTip = powerState == .disconnected
+            ? upsState.connectionErrorText
+            : ([upsState.stateTitle] + [upsState.percentText, upsState.minutesText].compactMap { $0 }).joined(separator: ", ")
+    }
+    
+    static func symbol(_ name: String) -> NSImage? {
+        let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
+            ?? NSImage(systemSymbolName: "bolt.fill", accessibilityDescription: nil)
+        image?.isTemplate = true
+        return image
+    }
+    
+    /// The state symbol with a question mark beside it: not connected, the values may be stale.
+    static func symbolWithQuestionMark(_ name: String) -> NSImage? {
+        guard let base = symbol(name), let mark = symbol("questionmark") else { return symbol(name) }
+        let size = NSSize(width: base.size.width + 1 + mark.size.width * 0.8,
+                          height: max(base.size.height, mark.size.height))
+        let image = NSImage(size: size, flipped: false) { _ in
+            base.draw(in: NSRect(x: 0, y: (size.height - base.size.height) / 2,
+                                 width: base.size.width, height: base.size.height))
+            let markSize = NSSize(width: mark.size.width * 0.8, height: mark.size.height * 0.8)
+            mark.draw(in: NSRect(x: base.size.width + 1, y: (size.height - markSize.height) / 2,
+                                 width: markSize.width, height: markSize.height))
+            return true
         }
+        image.isTemplate = true
+        return image
     }
 }
 

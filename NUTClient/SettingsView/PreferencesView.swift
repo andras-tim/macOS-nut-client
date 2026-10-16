@@ -17,6 +17,7 @@ class AppPreferences: ObservableObject {
     @Published var password: String { didSet { UserDefaults.standard.set(password, forKey: "nutPass") } }
     
     @Published var notifyPowerEvents: Bool { didSet { UserDefaults.standard.set(notifyPowerEvents, forKey: "notifyPowerEvents") } }
+    @Published var menuBarStatus: String { didSet { UserDefaults.standard.set(menuBarStatus, forKey: "menuBarStatus") } }
     
     init() {
         self.selectedVars = UserDefaults.standard.stringArray(forKey: "SelectedUPSVars") ?? ["ups.status", "battery.charge", "ups.load"]
@@ -27,6 +28,7 @@ class AppPreferences: ObservableObject {
         self.password = UserDefaults.standard.string(forKey: "nutPass") ?? ""
         
         self.notifyPowerEvents = UserDefaults.standard.object(forKey: "notifyPowerEvents") as? Bool ?? true
+        self.menuBarStatus = UPSStateMachine.StatusDisplay.current.rawValue
     }
 }
 
@@ -45,6 +47,14 @@ struct PreferencesView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Toggle("Notify on power failure, restore and shutdown", isOn: $prefs.notifyPowerEvents)
                         .toggleStyle(.switch)
+                    
+                    Picker("Show Status in Menu Bar", selection: $prefs.menuBarStatus) {
+                        ForEach(UPSStateMachine.StatusDisplay.allCases, id: \.rawValue) { option in
+                            Text(option.title).tag(option.rawValue)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .fixedSize()
                 }
                 .padding(8)
                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -10,22 +10,14 @@ import Combine
 struct HeaderView: View {
     @ObservedObject var state: UPSStateMachine
     
-    var stateTitle: String {
-        if state.currentStatus.contains("LB") { return "Battery Low" }
-        if state.currentStatus.contains("OB") { return "Running on Battery" }
-        return "Running on AC" // default (OL - Online)
-    }
-    
     var stateColor: Color {
-        if state.currentStatus.contains("LB") { return .red }
-        if state.currentStatus.contains("OB") { return .orange }
-        return .green
-    }
-    
-    var stateIcon: String {
-        if state.currentStatus.contains("LB") { return "icon.battery.low" }
-        if state.currentStatus.contains("OB") { return "icon.battery.exclamation" }
-        return "icon.battery.bolt"
+        switch state.powerState {
+        case .charging: return .blue
+        case .charged: return .green
+        case .discharging: return .yellow
+        case .critical: return .red
+        case .disconnected: return .gray
+        }
     }
 
     var body: some View {
@@ -37,13 +29,20 @@ struct HeaderView: View {
                         .fill(stateColor.opacity(0.2))
                         .frame(width: 44, height: 44)
                     
-                    Image(stateIcon)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(stateColor)
+                    // the menu bar icon, bigger and coloured
+                    HStack(spacing: 1) {
+                        Image(systemName: state.iconSymbolName)
+                        if state.powerState == .disconnected {
+                            Image(systemName: "questionmark")
+                                .font(.system(size: 13, weight: .bold))
+                        }
+                    }
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(stateColor)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(stateTitle)
+                    Text(state.stateTitle)
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.primary)
                     
@@ -69,10 +68,13 @@ struct HeaderView: View {
                     
                     Spacer()
                     
-                    Text(state.isConnected ? "Connected"
-                         : state.localNetworkDenied ? "Local network access needed" : "Disconnected")
+                    Text(state.powerState == .disconnected
+                         ? (state.localNetworkDenied ? "Local Network access needed" : (state.connectionError ?? "Not connected"))
+                         : "Connected")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(state.isConnected ? .primary : .red)
+                        .foregroundColor(state.powerState == .disconnected ? .red : .primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.trailing)
                 }
                 
                 // battery charge level
