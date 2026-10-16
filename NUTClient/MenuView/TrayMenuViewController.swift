@@ -55,6 +55,11 @@ class TrayMenuController: NSObject, NSMenuDelegate {
                 // group Items
                 for row in section.items {
                     let item = NSMenuItem(title: row.displayTitle, action: nil, keyEquivalent: "")
+                    // Disabled keeps the row unclickable; the explicit colour keeps it readable (not dimmed).
+                    item.attributedTitle = NSAttributedString(string: row.displayTitle, attributes: [
+                        .font: NSFont.menuFont(ofSize: 0),
+                        .foregroundColor: NSColor.labelColor
+                    ])
                     item.isEnabled = false
                     item.indentationLevel = 1
                     menu.addItem(item)

@@ -164,9 +164,12 @@ class NUTClient {
         fetchStats()
         DispatchQueue.main.async {
             self.pollTimer?.invalidate()
-            self.pollTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            // .common modes: keep polling while the menu is open; upsd drops a client silent for 60 s.
+            let timer = Timer(timeInterval: 5.0, repeats: true) { [weak self] _ in
                 self?.fetchStats()
             }
+            RunLoop.main.add(timer, forMode: .common)
+            self.pollTimer = timer
         }
     }
     

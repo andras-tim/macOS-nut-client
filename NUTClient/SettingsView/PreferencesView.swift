@@ -6,7 +6,6 @@
 //
 import SwiftUI
 import Combine
-import ServiceManagement // Required for Launch at Login
 
 class AppPreferences: ObservableObject {
     @Published var selectedVars: [String] { didSet { UserDefaults.standard.set(selectedVars, forKey: "SelectedUPSVars") } }
@@ -17,21 +16,7 @@ class AppPreferences: ObservableObject {
     @Published var username: String { didSet { UserDefaults.standard.set(username, forKey: "nutUser") } }
     @Published var password: String { didSet { UserDefaults.standard.set(password, forKey: "nutPass") } }
     
-    // --- New Preferences ---
-    @Published var hideDockIcon: Bool {
-        didSet {
-            UserDefaults.standard.set(hideDockIcon, forKey: "hideDockIcon")
-            updateDockIconState()
-        }
-    }
-    
     @Published var notifyPowerEvents: Bool { didSet { UserDefaults.standard.set(notifyPowerEvents, forKey: "notifyPowerEvents") } }
-    
-    @Published var launchAtLogin: Bool {
-        didSet {
-            updateLaunchAtLoginState()
-        }
-    }
     
     init() {
         self.selectedVars = UserDefaults.standard.stringArray(forKey: "SelectedUPSVars") ?? ["ups.status", "battery.charge", "ups.load"]
@@ -41,49 +26,7 @@ class AppPreferences: ObservableObject {
         self.username = UserDefaults.standard.string(forKey: "nutUser") ?? ""
         self.password = UserDefaults.standard.string(forKey: "nutPass") ?? ""
         
-        // Default to hiding the dock icon for a menu bar app
-        self.hideDockIcon = UserDefaults.standard.object(forKey: "hideDockIcon") as? Bool ?? true
         self.notifyPowerEvents = UserDefaults.standard.object(forKey: "notifyPowerEvents") as? Bool ?? true
-        
-        // Read actual system status for Launch at Login
-        if #available(macOS 13.0, *) {
-            self.launchAtLogin = SMAppService.mainApp.status == .enabled
-        } else {
-            self.launchAtLogin = false
-        }
-        
-        // Apply the dock state immediately on boot
-        DispatchQueue.main.async { [weak self] in
-            self?.updateDockIconState()
-        }
-    }
-    
-    // MARK: - Behavior Updaters
-    
-    private func updateDockIconState() {
-        if hideDockIcon {
-            // .accessory hides it from Dock and Cmd+Tab
-            NSApp.setActivationPolicy(.accessory)
-        } else {
-            // .regular shows it in the Dock
-            NSApp.setActivationPolicy(.regular)
-        }
-    }
-    
-    private func updateLaunchAtLoginState() {
-        if #available(macOS 13.0, *) {
-            do {
-                if launchAtLogin {
-                    if SMAppService.mainApp.status == .notRegistered {
-                        try SMAppService.mainApp.register()
-                    }
-                } else {
-                    try SMAppService.mainApp.unregister()
-                }
-            } catch {
-                print("Failed to update Launch at Login: \(error)")
-            }
-        }
     }
 }
 
@@ -100,27 +43,8 @@ struct PreferencesView: View {
             // --- App Behavior Settings ---
             GroupBox("App Behavior") {
                 VStack(alignment: .leading, spacing: 12) {
-                    Toggle("Hide App from Dock", isOn: $prefs.hideDockIcon)
-                        .toggleStyle(.switch)
-                    
                     Toggle("Notify on power failure, restore and shutdown", isOn: $prefs.notifyPowerEvents)
                         .toggleStyle(.switch)
-                    
-                    HStack {
-                        Toggle("Launch at Login", isOn: $prefs.launchAtLogin)
-                            .toggleStyle(.switch)
-                            .disabled({
-                                if #available(macOS 13.0, *) { return false }
-                                return true
-                            }())
-                        
-                        // Warn macOS 12 users gracefully
-                        if #unavailable(macOS 13.0) {
-                            Text("(Requires macOS 13+)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
                 }
                 .padding(8)
                 .frame(maxWidth: .infinity, alignment: .leading)
