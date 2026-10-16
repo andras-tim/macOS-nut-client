@@ -59,6 +59,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = trayMenuController.menu
         
         sharedClient.connect()
+        upsState.$isConnected
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.updateMenuIcon()
+            }
+            .store(in: &cancellables)
+        
         upsState.$variables
             .receive(on: RunLoop.main)
             .sink { [weak self] variables in
@@ -97,9 +104,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     
     private func updateMenuIcon() {
-        if let button = statusItem.button {
-            let iconName = upsState.isRunningOnBattery ? "icon.battery.exclamation" : "icon.battery.bolt"
-            button.image = NSImage(named: iconName)
+        guard let button = statusItem.button else { return }
+        // Without a connection the last values may be stale: show that instead of a healthy-looking icon.
+        if !upsState.isConnected {
+            button.image = NSImage(named: "icon.battery.low")
+            button.toolTip = upsState.localNetworkDenied
+                ? "Local network access needed for \(upsState.hostString)"
+                : "Not connected to \(upsState.hostString)"
+        } else if upsState.isRunningOnBattery {
+            button.image = NSImage(named: "icon.battery.exclamation")
+            button.toolTip = "On UPS battery"
+        } else {
+            button.image = NSImage(named: "icon.battery.bolt")
+            button.toolTip = "On mains power"
         }
     }
 }
