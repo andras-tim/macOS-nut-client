@@ -25,7 +25,9 @@ class TrayMenuController: NSObject, NSMenuDelegate {
         // --- swiftui header ---
         let headerView = HeaderView(state: viewModel.state)
         let headerController = NSHostingController(rootView: headerView)
-        headerController.view.frame.size = NSSize(width: 300, height: 155)
+        // as tall as its content: a disconnect reason can take several lines
+        let headerHeight = headerController.sizeThatFits(in: NSSize(width: 300, height: 1000)).height
+        headerController.view.frame.size = NSSize(width: 300, height: max(headerHeight, 155))
         
         let headerMenuItem = NSMenuItem()
         headerMenuItem.view = headerController.view

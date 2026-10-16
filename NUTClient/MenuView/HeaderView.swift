@@ -20,6 +20,13 @@ struct HeaderView: View {
         }
     }
 
+    var disconnectReason: String {
+        if state.localNetworkDenied {
+            return "macOS blocks the connection: switch on NUTClient in System Settings > Privacy & Security > Local Network."
+        }
+        return state.connectionError ?? "No connection to the NUT server yet."
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             // top half: icon, title, ip
@@ -68,13 +75,18 @@ struct HeaderView: View {
                     
                     Spacer()
                     
-                    Text(state.powerState == .disconnected
-                         ? (state.localNetworkDenied ? "Local Network access needed" : (state.connectionError ?? "Not connected"))
-                         : "Connected")
+                    Text(state.powerState == .disconnected ? "Disconnected" : "Connected")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(state.powerState == .disconnected ? .red : .primary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.trailing)
+                }
+                
+                // why: wrapped over as many lines as it needs (the menu sizes the header to fit)
+                if state.powerState == .disconnected {
+                    Text(disconnectReason)
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
                 // battery charge level
