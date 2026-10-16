@@ -13,6 +13,7 @@ class AppPreferences: ObservableObject {
     
     @Published var host: String { didSet { UserDefaults.standard.set(host, forKey: "nutHost") } }
     @Published var port: String { didSet { UserDefaults.standard.set(port, forKey: "nutPort") } }
+    @Published var upsName: String { didSet { UserDefaults.standard.set(upsName, forKey: "nutUPSName") } }
     @Published var username: String { didSet { UserDefaults.standard.set(username, forKey: "nutUser") } }
     @Published var password: String { didSet { UserDefaults.standard.set(password, forKey: "nutPass") } }
     
@@ -34,6 +35,7 @@ class AppPreferences: ObservableObject {
         self.selectedVars = UserDefaults.standard.stringArray(forKey: "SelectedUPSVars") ?? ["ups.status", "battery.charge", "ups.load"]
         self.host = UserDefaults.standard.string(forKey: "nutHost") ?? "127.0.0.1"
         self.port = UserDefaults.standard.string(forKey: "nutPort") ?? "3493"
+        self.upsName = UserDefaults.standard.string(forKey: "nutUPSName") ?? "ups"
         self.username = UserDefaults.standard.string(forKey: "nutUser") ?? ""
         self.password = UserDefaults.standard.string(forKey: "nutPass") ?? ""
         
@@ -129,6 +131,9 @@ struct PreferencesView: View {
                             .frame(width: 80)
                     }
                     
+                    TextField("UPS Name (as in the server's ups.conf)", text: $prefs.upsName)
+                        .textFieldStyle(.roundedBorder)
+                    
                     HStack {
                         TextField("Username (Optional)", text: $prefs.username)
                             .textFieldStyle(.roundedBorder)
@@ -157,6 +162,7 @@ struct PreferencesView: View {
                                 client.applySettingsAndConnect(
                                     host: prefs.host,
                                     port: prefs.port,
+                                    upsName: prefs.upsName,
                                     username: prefs.username,
                                     password: prefs.password
                                 )

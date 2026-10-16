@@ -36,10 +36,12 @@ class NUTClient {
     
     // MARK: - Dynamic Configuration
     
-    func applySettingsAndConnect(host: String, port: String, username: String, password: String) {
+    func applySettingsAndConnect(host: String, port: String, upsName: String, username: String, password: String) {
         self.state.hostString = host
         self.host = NWEndpoint.Host(host)
         self.port = NWEndpoint.Port(rawValue: UInt16(port) ?? 3493) ?? 3493
+        let trimmedName = upsName.trimmingCharacters(in: .whitespaces)
+        self.upsName = trimmedName.isEmpty ? "ups" : trimmedName
         
         // Only assign credentials if they aren't empty
         self.username = username.trimmingCharacters(in: .whitespaces).isEmpty ? nil : username

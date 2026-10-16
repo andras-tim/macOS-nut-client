@@ -28,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     lazy var sharedClient: NUTClient = {
         let savedHost = UserDefaults.standard.string(forKey: "nutHost") ?? "127.0.0.1"
         let savedPort = UInt16(UserDefaults.standard.string(forKey: "nutPort") ?? "3493") ?? 3493
+        let savedUPSName = UserDefaults.standard.string(forKey: "nutUPSName") ?? ""
         let savedUser = UserDefaults.standard.string(forKey: "nutUser")
         let savedPass = UserDefaults.standard.string(forKey: "nutPass")
         
@@ -35,6 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             state: upsState,
             host: savedHost,
             port: savedPort,
+            upsName: savedUPSName.isEmpty ? "ups" : savedUPSName,
             username: savedUser?.isEmpty == false ? savedUser : nil,
             password: savedPass?.isEmpty == false ? savedPass : nil
         )
