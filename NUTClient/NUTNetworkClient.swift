@@ -85,9 +85,15 @@ class NUTClient {
             DispatchQueue.main.async {
                 switch networkState {
                 case .ready:
+                    self?.state.localNetworkDenied = false
                     self?.state.isConnected = true
                     self?.startReceiving()
                     self?.performHandshake()
+                case .waiting:
+                    // The connection keeps waiting and goes ready by itself once access is granted.
+                    if self?.connection?.currentPath?.unsatisfiedReason == .localNetworkDenied {
+                        self?.state.localNetworkDenied = true
+                    }
                 case .failed(let error):
                     print("Connection failed: \(error)")
                     self?.handleDisconnect()

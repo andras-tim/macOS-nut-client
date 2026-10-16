@@ -69,7 +69,8 @@ struct HeaderView: View {
                     
                     Spacer()
                     
-                    Text(state.isConnected ? "Connected" : "Disconnected")
+                    Text(state.isConnected ? "Connected"
+                         : state.localNetworkDenied ? "Local network access needed" : "Disconnected")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(state.isConnected ? .primary : .red)
                 }

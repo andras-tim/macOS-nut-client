@@ -9,6 +9,8 @@ import Combine
 
 class UPSStateMachine: ObservableObject {
     @Published var isConnected: Bool = false
+    /// macOS (15+) blocks the connection until the user allows Local Network access for this app.
+    @Published var localNetworkDenied: Bool = false
     @Published var hostString: String = ""
     @Published var variables: [String: String] = [:]
     

@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     // Used to observe background changes for the icon
     private var cancellables = Set<AnyCancellable>()
+    private var localNetworkAlertShown = false
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -65,6 +66,34 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 self?.powerNotifier.update(variables: variables)
             }
             .store(in: &cancellables)
+        
+        upsState.$localNetworkDenied
+            .removeDuplicates()
+            .filter { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.offerLocalNetworkSettings()
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// macOS asks for Local Network access only once; after a denial (or a missed prompt) only Settings can grant it.
+    private func offerLocalNetworkSettings() {
+        guard !localNetworkAlertShown else { return }
+        localNetworkAlertShown = true
+        
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.messageText = "Local Network access needed"
+        alert.informativeText = "macOS blocks NUT Client from reaching the UPS server \(upsState.hostString). "
+            + "Switch on NUTClient in System Settings > Privacy & Security > Local Network; "
+            + "the connection then starts by itself."
+        alert.addButton(withTitle: "Open Settings")
+        alert.addButton(withTitle: "Later")
+        if alert.runModal() == .alertFirstButtonReturn,
+           let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork") {
+            NSWorkspace.shared.open(url)
+        }
     }
     
     private func updateMenuIcon() {
