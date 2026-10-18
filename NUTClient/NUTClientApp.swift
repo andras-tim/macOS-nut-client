@@ -57,23 +57,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = trayMenuController.menu
         
         sharedClient.connect()
+        // DispatchQueue.main, not RunLoop.main: the RunLoop scheduler runs only in the default mode, so while the menu
+        // is open (event tracking mode) the icon and the power notifications would wait until it closes.
         // The menu bar text switches live from Preferences.
         NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateMenuIcon()
             }
             .store(in: &cancellables)
         
         upsState.$isConnected
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateMenuIcon()
             }
             .store(in: &cancellables)
         
         upsState.$variables
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] variables in
                 self?.updateMenuIcon()
                 self?.powerNotifier.update(variables: variables)
@@ -83,6 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         upsState.$localNetworkDenied
             .removeDuplicates()
             .filter { $0 }
+            // RunLoop.main on purpose: the modal alert waits until the menu is closed
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.offerLocalNetworkSettings()
