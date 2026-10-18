@@ -41,7 +41,12 @@ struct PreferencesView: View {
     
     /// CFBundleShortVersionString: the release tag, set by the CI build (MARKETING_VERSION).
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-    private static let projectURL = URL(string: "https://github.com/andras-tim/macOS-nut-client")!
+    /// The release of this version; a build between tags (git describe: "0.8-tia.8-1-gd3b40a3") has none, it gets the list.
+    private var releaseURL: URL {
+        let releases = "https://github.com/andras-tim/macOS-nut-client/releases"
+        let untagged = appVersion == "?" || appVersion.range(of: #"-\d+-g[0-9a-f]+$"#, options: .regularExpression) != nil
+        return URL(string: untagged ? releases : "\(releases)/tag/v\(appVersion)") ?? URL(string: releases)!
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -159,15 +164,12 @@ struct PreferencesView: View {
                         .frame(width: 16, height: 16)
                     Text(verbatim: "NUT Client")
                         .font(.caption.weight(.medium))
-                    Text(verbatim: appVersion)
-                        .font(.caption.monospacedDigit())
-                        .foregroundColor(.secondary)
-                        .textSelection(.enabled)
-                    Spacer()
-                    Link(destination: Self.projectURL) {
-                        Text(verbatim: "GitHub")
-                            .font(.caption)
+                    Link(destination: releaseURL) {
+                        Text(verbatim: appVersion)
+                            .font(.caption.monospacedDigit())
                     }
+                    .help(releaseURL.absoluteString)
+                    Spacer()
                 }
             }
         }
