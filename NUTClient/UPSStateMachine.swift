@@ -54,10 +54,10 @@ class UPSStateMachine: ObservableObject {
         
         var title: String {
             switch self {
-            case .never: return "Never"
-            case .discharging: return "Discharging"
-            case .activity: return "Charging & Discharging"
-            case .always: return "Always"
+            case .never: return String(localized: "menuBarStatus.never", defaultValue: "Never")
+            case .discharging: return String(localized: "menuBarStatus.discharging", defaultValue: "Discharging")
+            case .activity: return String(localized: "menuBarStatus.activity", defaultValue: "Charging & Discharging")
+            case .always: return String(localized: "menuBarStatus.always", defaultValue: "Always")
             }
         }
         
@@ -110,11 +110,11 @@ class UPSStateMachine: ObservableObject {
     
     var stateTitle: String {
         switch powerState {
-        case .disconnected: return "Not Connected"
-        case .charged: return "On Mains, Charged"
-        case .charging: return "On Mains, Charging"
-        case .discharging: return "Running on Battery"
-        case .critical: return "Battery Nearly Empty"
+        case .disconnected: return String(localized: "Not Connected")
+        case .charged: return String(localized: "On Mains, Charged")
+        case .charging: return String(localized: "On Mains, Charging")
+        case .discharging: return String(localized: "Running on Battery")
+        case .critical: return String(localized: "Battery Nearly Empty")
         }
     }
     
@@ -126,7 +126,7 @@ class UPSStateMachine: ObservableObject {
     }
     
     var percentText: String? { chargeValue.map { "\(Int($0))%" } }
-    var minutesText: String? { runtimeValue.map { String(format: "%d mins", Int($0) / 60) } }
+    var minutesText: String? { runtimeValue.map { String(localized: "\(Int($0) / 60) mins") } }
     
     /// Text beside the menu bar icon. Never shows a disconnection: that is an error, shown by the icon and tooltip.
     func statusText(_ display: StatusDisplay) -> String {
@@ -147,8 +147,10 @@ class UPSStateMachine: ObservableObject {
     
     /// "Not connected to <host>: <reason>", for the tooltip and the menu.
     var connectionErrorText: String {
-        let reason = localNetworkDenied ? "Local Network access needed" : (connectionError ?? "no connection")
-        return "Not connected to \(hostString): \(reason)"
+        let reason = localNetworkDenied
+            ? String(localized: "Local Network access needed")
+            : (connectionError ?? String(localized: "no connection"))
+        return String(localized: "Not connected to \(hostString): \(reason)")
     }
     
     // MARK: - Helper Methods

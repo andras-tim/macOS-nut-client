@@ -49,7 +49,7 @@ class TrayMenuViewModel {
                 
                 // only add the section if it actually has live data
                 if !rows.isEmpty {
-                    sections.append(MenuSection(title: category.rawValue.uppercased(), items: rows))
+                    sections.append(MenuSection(title: category.title.uppercased(), items: rows))
                 }
             }
         }

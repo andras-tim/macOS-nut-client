@@ -87,67 +87,67 @@ extension UPSVariable {
     var displayName: String {
         switch self {
         // Ambient
-        case .ambientTemperature: return "Temperature"
-        case .ambientTemperatureHigh: return "High Temp Threshold"
+        case .ambientTemperature: return String(localized: "Temperature")
+        case .ambientTemperatureHigh: return String(localized: "High Temp Threshold")
             
         // Battery
-        case .batteryCharge: return "Charge Level"
-        case .batteryChargerStatus: return "Charger Status"
-        case .batteryPacks: return "External Packs"
-        case .batteryRuntime: return "Time Remaining"
-        case .batteryRuntimeLow: return "Low Battery Warning at"
-        case .batteryVoltage: return "Battery Voltage"
+        case .batteryCharge: return String(localized: "Charge Level")
+        case .batteryChargerStatus: return String(localized: "Charger Status")
+        case .batteryPacks: return String(localized: "External Packs")
+        case .batteryRuntime: return String(localized: "Time Remaining")
+        case .batteryRuntimeLow: return String(localized: "Low Battery Warning at")
+        case .batteryVoltage: return String(localized: "Battery Voltage")
             
         // Device & Driver
-        case .deviceMfr, .upsMfr: return "Manufacturer"
-        case .deviceModel, .upsModel: return "Model"
-        case .devicePart: return "Part Number"
-        case .deviceSerial, .upsSerial: return "Serial Number"
-        case .deviceType: return "Device Type"
-        case .driverName: return "Driver"
-        case .driverParameterPollinterval: return "Poll Interval"
-        case .driverParameterPort: return "Port"
-        case .driverParameterSynchronous: return "Synchronous Mode"
-        case .driverVersion: return "Driver Version"
-        case .driverVersionInternal: return "Internal Version"
+        case .deviceMfr, .upsMfr: return String(localized: "Manufacturer")
+        case .deviceModel, .upsModel: return String(localized: "Model")
+        case .devicePart: return String(localized: "Part Number")
+        case .deviceSerial, .upsSerial: return String(localized: "Serial Number")
+        case .deviceType: return String(localized: "Device Type")
+        case .driverName: return String(localized: "Driver")
+        case .driverParameterPollinterval: return String(localized: "Poll Interval")
+        case .driverParameterPort: return String(localized: "Port")
+        case .driverParameterSynchronous: return String(localized: "Synchronous Mode")
+        case .driverVersion: return String(localized: "Driver Version")
+        case .driverVersionInternal: return String(localized: "Internal Version")
             
         // Input
-        case .inputFrequency: return "Input Frequency"
-        case .inputFrequencyHigh: return "Frequency High Limit"
-        case .inputFrequencyLow: return "Frequency Low Limit"
-        case .inputFrequencyNominal: return "Nominal Frequency"
-        case .inputTransferBoostHigh: return "Boost Transfer High"
-        case .inputTransferHigh: return "High Voltage Transfer"
-        case .inputTransferLow: return "Low Voltage Transfer"
-        case .inputTransferTrimLow: return "Trim Transfer Low"
-        case .inputVoltage: return "Input Voltage"
-        case .inputVoltageNominal: return "Nominal Input"
+        case .inputFrequency: return String(localized: "Input Frequency")
+        case .inputFrequencyHigh: return String(localized: "Frequency High Limit")
+        case .inputFrequencyLow: return String(localized: "Frequency Low Limit")
+        case .inputFrequencyNominal: return String(localized: "Nominal Frequency")
+        case .inputTransferBoostHigh: return String(localized: "Boost Transfer High")
+        case .inputTransferHigh: return String(localized: "High Voltage Transfer")
+        case .inputTransferLow: return String(localized: "Low Voltage Transfer")
+        case .inputTransferTrimLow: return String(localized: "Trim Transfer Low")
+        case .inputVoltage: return String(localized: "Input Voltage")
+        case .inputVoltageNominal: return String(localized: "Nominal Input")
             
         // Outlets
-        case .outlet1DelayShutdown, .outlet2DelayShutdown: return "Shutdown Delay"
-        case .outlet1DelayStart, .outlet2DelayStart: return "Startup Delay"
-        case .outlet1Id, .outlet2Id: return "Outlet ID"
-        case .outlet1Status, .outlet2Status: return "Outlet Status"
+        case .outlet1DelayShutdown, .outlet2DelayShutdown: return String(localized: "Shutdown Delay")
+        case .outlet1DelayStart, .outlet2DelayStart: return String(localized: "Startup Delay")
+        case .outlet1Id, .outlet2Id: return String(localized: "Outlet ID")
+        case .outlet1Status, .outlet2Status: return String(localized: "Outlet Status")
             
         // Output
-        case .outputCurrent: return "Output Current"
-        case .outputCurrentNominal: return "Nominal Current"
-        case .outputFrequency: return "Output Frequency"
-        case .outputFrequencyNominal: return "Nominal Frequency"
-        case .outputPhases: return "Phases"
-        case .outputVoltage: return "Output Voltage"
-        case .outputVoltageNominal: return "Nominal Output"
+        case .outputCurrent: return String(localized: "Output Current")
+        case .outputCurrentNominal: return String(localized: "Nominal Current")
+        case .outputFrequency: return String(localized: "Output Frequency")
+        case .outputFrequencyNominal: return String(localized: "Nominal Frequency")
+        case .outputPhases: return String(localized: "Phases")
+        case .outputVoltage: return String(localized: "Output Voltage")
+        case .outputVoltageNominal: return String(localized: "Nominal Output")
             
         // UPS General
-        case .upsBeeperStatus: return "Beeper Status"
-        case .upsDescription: return "Description"
-        case .upsFirmware: return "Firmware"
-        case .upsLoad: return "Current Load"
-        case .upsPower: return "Apparent Power"
-        case .upsPowerNominal: return "Nominal Power"
-        case .upsRealPower: return "Real Power"
-        case .upsStatus: return "UPS Status"
-        case .upsTestResult: return "Last Self-Test"
+        case .upsBeeperStatus: return String(localized: "Beeper Status")
+        case .upsDescription: return String(localized: "Description")
+        case .upsFirmware: return String(localized: "Firmware")
+        case .upsLoad: return String(localized: "Current Load")
+        case .upsPower: return String(localized: "Apparent Power")
+        case .upsPowerNominal: return String(localized: "Nominal Power")
+        case .upsRealPower: return String(localized: "Real Power")
+        case .upsStatus: return String(localized: "UPS Status")
+        case .upsTestResult: return String(localized: "Last Self-Test")
         }
     }
     
@@ -198,9 +198,9 @@ extension UPSVariable {
                 let minutes = seconds / 60
                 
                 if minutes > 0 {
-                    return "\(minutes) min"
+                    return String(localized: "\(minutes) min")
                 } else {
-                    return "\(seconds) sec"
+                    return String(localized: "\(seconds) sec")
                 }
             }
             return "\(value) s"
@@ -208,16 +208,16 @@ extension UPSVariable {
         // Humanize the raw UPS status abbreviations
         case .upsStatus:
             let upperVal = value.uppercased()
-            if upperVal.contains("OL") { return "Online (AC Power)" }
-            if upperVal.contains("OB") { return "On Battery" }
-            if upperVal.contains("LB") { return "Low Battery!" }
-            if upperVal.contains("CHRG") { return "Charging" }
-            if upperVal.contains("DISCHRG") { return "Discharging" }
+            if upperVal.contains("OL") { return String(localized: "Online (AC Power)") }
+            if upperVal.contains("OB") { return String(localized: "On Battery") }
+            if upperVal.contains("LB") { return String(localized: "Low Battery!") }
+            if upperVal.contains("CHRG") { return String(localized: "Charging") }
+            if upperVal.contains("DISCHRG") { return String(localized: "Discharging") }
             return value
             
         // Beeper
         case .upsBeeperStatus:
-            return value.lowercased() == "enabled" ? "Active" : "Muted"
+            return value.lowercased() == "enabled" ? String(localized: "Active") : String(localized: "Muted")
             
         // Default (Strings, IDs, Models) - Return exactly as received
         default:
@@ -236,6 +236,19 @@ enum UPSCategory: String, CaseIterable {
     case outlets = "Outlets"
     case output = "Output"
     case upsGeneral = "UPS General"
+
+    var title: String {
+        switch self {
+        case .ambient: return String(localized: "Ambient")
+        case .battery: return String(localized: "Battery")
+        case .device: return String(localized: "Device Info")
+        case .driver: return String(localized: "Driver Data")
+        case .input: return String(localized: "Input")
+        case .outlets: return String(localized: "Outlets")
+        case .output: return String(localized: "Output")
+        case .upsGeneral: return String(localized: "UPS General")
+        }
+    }
 }
 
 // Add a category mapper to your existing UPSVariable enum

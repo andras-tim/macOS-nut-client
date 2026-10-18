@@ -18,6 +18,7 @@ This project is a pure Swift/AppKit/SwiftUI port of the original Electron-based 
   * Launch at Login support (on macOS 13+).
   * Toggle to hide/show the Dock icon natively.
 * **Backward Compatible:** Supports macOS 12 (Monterey) and newer.
+* **Languages:** English and Hungarian, following the macOS language setting (`NUTClient/Localizable.xcstrings`).
 
 ### Installation & macOS Gatekeeper
 

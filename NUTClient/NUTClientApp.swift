@@ -97,12 +97,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
-        alert.messageText = "Local Network access needed"
-        alert.informativeText = "macOS blocks NUT Client from reaching the UPS server \(upsState.hostString). "
-            + "Switch on NUTClient in System Settings > Privacy & Security > Local Network; "
-            + "the connection then starts by itself."
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Later")
+        alert.messageText = String(localized: "Local Network access needed")
+        alert.informativeText = String(localized: """
+            macOS blocks NUT Client from reaching the UPS server \(upsState.hostString). \
+            Switch on NUTClient in System Settings > Privacy & Security > Local Network; \
+            the connection then starts by itself.
+            """)
+        alert.addButton(withTitle: String(localized: "Open Settings"))
+        alert.addButton(withTitle: String(localized: "Later"))
         if alert.runModal() == .alertFirstButtonReturn,
            let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork") {
             NSWorkspace.shared.open(url)
@@ -175,18 +177,19 @@ final class PowerNotifier {
         guard UserDefaults.standard.object(forKey: "notifyPowerEvents") as? Bool ?? true else { return }
         
         let added = flags.subtracting(previous)
-        let charge = variables[UPSVariable.batteryCharge.rawValue].map { "\($0) %" } ?? "unknown charge"
-        let minutes = variables[UPSVariable.batteryRuntime.rawValue].flatMap { Double($0) }.map { "about \(Int($0) / 60) min" }
-            ?? "unknown time"
+        let charge = variables[UPSVariable.batteryCharge.rawValue].map { "\($0)%" } ?? String(localized: "unknown charge")
+        let minutes = variables[UPSVariable.batteryRuntime.rawValue].flatMap { Double($0) }.map { String(localized: "about \(Int($0) / 60) min") }
+            ?? String(localized: "unknown time")
         
         if added.contains("FSD") {
-            post("Shutting down", "The UPS server ordered a shutdown. Save your work now.")
+            post(String(localized: "Shutting down"), String(localized: "The UPS server ordered a shutdown. Save your work now."))
         } else if added.contains("LB") {
-            post("UPS battery low", "Battery at \(charge), \(minutes) left. The computer will shut down soon.")
+            post(String(localized: "UPS battery low"),
+                 String(localized: "Battery at \(charge), \(minutes) left. The computer will shut down soon."))
         } else if added.contains("OB") {
-            post("Power failure", "Running on UPS battery: \(charge), \(minutes) left.")
+            post(String(localized: "Power failure"), String(localized: "Running on UPS battery: \(charge), \(minutes) left."))
         } else if added.contains("OL") && previous.contains("OB") {
-            post("Power restored", "Back on mains power.")
+            post(String(localized: "Power restored"), String(localized: "Back on mains power."))
         }
     }
     

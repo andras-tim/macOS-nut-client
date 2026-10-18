@@ -197,7 +197,7 @@ struct PreferencesView: View {
             }
         } label: {
             Toggle(isOn: groupBinding) {
-                Text(category.rawValue)
+                Text(category.title)
                     .font(.system(size: 14, weight: .semibold))
             }
             .toggleStyle(MixedStateToggleStyle(isMixed: someSelected))

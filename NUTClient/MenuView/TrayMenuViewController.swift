@@ -37,7 +37,7 @@ class TrayMenuController: NSObject, NSMenuDelegate {
         let sections = viewModel.buildMenuData()
         
         if sections.isEmpty {
-            let emptyItem = NSMenuItem(title: "No variables selected.", action: nil, keyEquivalent: "")
+            let emptyItem = NSMenuItem(title: String(localized: "No variables selected."), action: nil, keyEquivalent: "")
             emptyItem.isEnabled = false
             menu.addItem(emptyItem)
         } else {

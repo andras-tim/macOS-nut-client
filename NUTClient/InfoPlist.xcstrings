@@ -1,0 +1,16 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSLocalNetworkUsageDescription": {
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Az alkalmaz\u00e1snak helyi h\u00e1l\u00f3zati hozz\u00e1f\u00e9r\u00e9s kell az UPS figyel\u00e9s\u00e9hez."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

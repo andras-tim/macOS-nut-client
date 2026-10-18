@@ -17,6 +17,8 @@
 		7B8BE5EB2FBC94FF00A94D14 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BE5EA2FBC94FC00A94D14 /* FooterView.swift */; };
 		7B8BE5F02FBDF76D00A94D14 /* TrayMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BE5EF2FBDF75C00A94D14 /* TrayMenuViewController.swift */; };
 		7B8BE5F22FBDF78700A94D14 /* TrayMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BE5F12FBDF78200A94D14 /* TrayMenuViewModel.swift */; };
+		7B8BE5F42FBE000000A94D14 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BE5F32FBE000000A94D14 /* Localizable.xcstrings */; };
+		7B8BE5F62FBE000000A94D14 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BE5F52FBE000000A94D14 /* InfoPlist.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		7B8BE5EA2FBC94FC00A94D14 /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		7B8BE5EF2FBDF75C00A94D14 /* TrayMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrayMenuViewController.swift; sourceTree = "<group>"; };
 		7B8BE5F12FBDF78200A94D14 /* TrayMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrayMenuViewModel.swift; sourceTree = "<group>"; };
+		7B8BE5F32FBE000000A94D14 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		7B8BE5F52FBE000000A94D14 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +82,8 @@
 				7B8BE5D92FBC94F000A94D14 /* MenuView */,
 				7B8BE5EC2FBCB06000A94D14 /* SettingsView */,
 				7B8BE5DA2FBC94F000A94D14 /* Assets.xcassets */,
+				7B8BE5F32FBE000000A94D14 /* Localizable.xcstrings */,
+				7B8BE5F52FBE000000A94D14 /* InfoPlist.xcstrings */,
 				7B8BE5DD2FBC94F000A94D14 /* NUTNetworkClient.swift */,
 				7B8BE5DF2FBC94F000A94D14 /* UPSStateMachine.swift */,
 				7B8BE5E02FBC94F000A94D14 /* UPSVariable.swift */,
@@ -136,6 +142,7 @@
 			knownRegions = (
 				en,
 				Base,
+				hu,
 			);
 			mainGroup = 7B03FCC32FBB854A001D6D52;
 			minimizedProjectReferenceProxies = 1;
@@ -155,6 +162,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B8BE5E92FBC94F000A94D14 /* Assets.xcassets in Resources */,
+				7B8BE5F42FBE000000A94D14 /* Localizable.xcstrings in Resources */,
+				7B8BE5F62FBE000000A94D14 /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,9 +22,9 @@ struct HeaderView: View {
 
     var disconnectReason: String {
         if state.localNetworkDenied {
-            return "macOS blocks the connection: switch on NUTClient in System Settings > Privacy & Security > Local Network."
+            return String(localized: "macOS blocks the connection: switch on NUTClient in System Settings > Privacy & Security > Local Network.")
         }
-        return state.connectionError ?? "No connection to the NUT server yet."
+        return state.connectionError ?? String(localized: "No connection to the NUT server yet.")
     }
 
     var body: some View {

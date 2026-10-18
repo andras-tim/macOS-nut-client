@@ -206,7 +206,7 @@ class NUTClient {
         for line in lines {
             // e.g. "ERR UNKNOWN-UPS" for a wrong UPS name: the socket is fine, the answer is not
             if line.hasPrefix("ERR ") {
-                let reason = "server replied " + line
+                let reason = String(localized: "server replied \(line)")
                 DispatchQueue.main.async { self.state.connectionError = reason }
             }
             // UPSDESC <ups> "<description>"
