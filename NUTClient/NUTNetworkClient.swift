@@ -92,10 +92,13 @@ class NUTClient {
                     self?.performHandshake()
                 case .waiting(let error):
                     // The connection keeps waiting and goes ready by itself once access is granted.
+                    self?.state.connectionError = error.localizedDescription
                     if self?.connection?.currentPath?.unsatisfiedReason == .localNetworkDenied {
                         self?.state.localNetworkDenied = true
+                    } else {
+                        // e.g. "Connection refused" while upsd restarts: NWConnection does not retry it by itself.
+                        self?.handleDisconnect()
                     }
-                    self?.state.connectionError = error.localizedDescription
                 case .failed(let error):
                     self?.state.connectionError = error.localizedDescription
                     print("Connection failed: \(error)")
