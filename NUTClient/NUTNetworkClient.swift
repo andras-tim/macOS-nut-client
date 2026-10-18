@@ -169,7 +169,9 @@ class NUTClient {
         DispatchQueue.main.async {
             self.pollTimer?.invalidate()
             // .common modes: keep polling while the menu is open; upsd drops a client silent for 60 s.
-            let timer = Timer(timeInterval: 5.0, repeats: true) { [weak self] _ in
+            // "pollInterval" in seconds, a string like nutPort; Preferences has no field for it.
+            let interval = Double(UserDefaults.standard.string(forKey: "pollInterval") ?? "").flatMap { $0 >= 1 ? $0 : nil } ?? 2.0
+            let timer = Timer(timeInterval: interval, repeats: true) { [weak self] _ in
                 self?.fetchStats()
             }
             RunLoop.main.add(timer, forMode: .common)
