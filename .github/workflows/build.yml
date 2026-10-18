@@ -14,7 +14,14 @@ jobs:
   build:
     runs-on: macos-15
     steps:
+      # the whole history with the tags, for git describe
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The version shown in Preferences: the tag on a release build (0.8-tia.8), else tag + commits + hash.
+      - name: Set the version
+        run: echo "APP_VERSION=$(git describe --tags --always | sed 's/^v//')" >> "$GITHUB_ENV"
 
       - name: Show the Xcode version
         run: xcodebuild -version
@@ -27,6 +34,7 @@ jobs:
           xcodebuild -project NUTClient.xcodeproj -target NUTClient -configuration Release
           ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO
           CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
+          MARKETING_VERSION="$APP_VERSION"
           SYMROOT="$PWD/build" build
 
       - name: Check architectures and signature

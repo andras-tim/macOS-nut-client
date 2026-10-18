@@ -39,6 +39,10 @@ struct PreferencesView: View {
     
     @State private var expandedGroups: [UPSCategory: Bool] = [:]
     
+    /// CFBundleShortVersionString: the release tag, set by the CI build (MARKETING_VERSION).
+    private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+    private static let projectURL = URL(string: "https://github.com/andras-tim/macOS-nut-client")!
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
@@ -143,6 +147,27 @@ struct PreferencesView: View {
                     .listStyle(.sidebar)
                     .background(Color(NSColor.controlBackgroundColor))
                     .cornerRadius(8)
+                }
+            }
+            
+            // --- About ---
+            VStack(spacing: 8) {
+                Divider()
+                HStack(spacing: 6) {
+                    Image(nsImage: NSApp.applicationIconImage)
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    Text(verbatim: "NUT Client")
+                        .font(.caption.weight(.medium))
+                    Text(verbatim: appVersion)
+                        .font(.caption.monospacedDigit())
+                        .foregroundColor(.secondary)
+                        .textSelection(.enabled)
+                    Spacer()
+                    Link(destination: Self.projectURL) {
+                        Text(verbatim: "GitHub")
+                            .font(.caption)
+                    }
                 }
             }
         }
